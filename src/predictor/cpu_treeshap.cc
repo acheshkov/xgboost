@@ -75,23 +75,24 @@ float UnwoundPathSum(const PathElement* unique_path, std::uint32_t unique_depth,
   const float zero_fraction = unique_path[path_index].zero_fraction;
   float next_one_portion = unique_path[unique_depth].pweight;
   float total = 0;
-  for (int i = unique_depth - 1; i >= 0; --i) {
+  for (int i = static_cast<int>(unique_depth) - 1; i >= 0; --i) {
     if (one_fraction != 0) {
       const float tmp =
-          next_one_portion * (unique_depth + 1) / static_cast<float>((i + 1) * one_fraction);
+          next_one_portion * (static_cast<float>(unique_depth) + 1) / static_cast<float>((i + 1) * one_fraction);
       total += tmp;
       next_one_portion =
           unique_path[i].pweight -
-          tmp * zero_fraction * ((unique_depth - i) / static_cast<float>(unique_depth + 1));
+          tmp * zero_fraction * ((static_cast<int>(unique_depth) - i) / (static_cast<float>(unique_depth) + 1));
     } else if (zero_fraction != 0) {
       total += (unique_path[i].pweight / zero_fraction) /
-               ((unique_depth - i) / static_cast<float>(unique_depth + 1));
+               ((static_cast<int>(unique_depth) - i) / (static_cast<float>(unique_depth) + 1));
     } else {
       CHECK_EQ(unique_path[i].pweight, 0) << "Unique path " << i << " must have zero weight";
     }
   }
   return total;
 }
+
 
 /**
  * \brief Recursive function that computes the feature attributions for a single tree.
