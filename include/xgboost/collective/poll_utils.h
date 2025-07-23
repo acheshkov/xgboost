@@ -158,11 +158,12 @@ struct PollHelper {
    * \brief add file descriptor to watch for exception
    * \param fd file descriptor to be watched
    */
-  inline void WatchException(SOCKET fd) {
+inline void WatchException(SOCKET fd) {
     auto& pfd = fds[fd];
     pfd.fd = fd;
-    pfd.events |= POLLPRI;
-  }
+    pfd.events = static_cast<short>(static_cast<unsigned short>(pfd.events) | POLLPRI);
+}
+
   void WatchException(xgboost::collective::TCPSocket const &socket) {
     this->WatchException(socket.Handle());
   }
