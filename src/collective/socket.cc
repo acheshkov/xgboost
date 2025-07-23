@@ -144,10 +144,10 @@ std::size_t TCPSocket::Send(StringView str) {
                  << " Error:" << last_error.Report();
   };
 
-  for (std::int32_t attempt = 0; attempt < std::max(retry, 1); ++attempt) {
+  for (std::uint32_t attempt = 0; attempt < static_cast<std::uint32_t>(std::max(retry, 1)); ++attempt) {
     if (attempt > 0) {
       LOG(WARNING) << "Retrying connection to " << host << " for the " << attempt << " time.";
-      std::this_thread::sleep_for(std::chrono::seconds{attempt << 1});
+      std::this_thread::sleep_for(std::chrono::seconds{static_cast<int>(attempt << 1)});
     }
 
     auto rc = connect(conn.Handle(), addr_handle, addr_len);
@@ -188,6 +188,7 @@ std::size_t TCPSocket::Send(StringView str) {
   auto close_rc = conn.Close();
   return Fail(ss.str(), std::move(close_rc) + std::move(last_error));
 }
+
 
 [[nodiscard]] Result GetHostName(std::string *p_out) {
   std::array<char, HOST_NAME_MAX> buf;
